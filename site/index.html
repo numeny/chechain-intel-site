@@ -221,23 +221,43 @@
         <div class="section-head">
           <div>
             <div class="eyebrow">样本预览</div>
-            <h2>先看 10 条，<br>再决定要不要买。</h2>
+            <h2>先自己筛，<br>再决定要不要买。</h2>
           </div>
-          <p>下面是真实数据中的 5 条（澳洲/巴西），完整样本每国 10 条，地址与来源参数已脱敏。</p>
+          <p>下面是 40 条演示数据（每国 20 条），可按国家、品牌、州筛选。地址与来源参数已脱敏，完整版不含联系方式。</p>
         </div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr><th>企业</th><th>类型</th><th>城市/州</th><th>代理品牌</th><th>所属集团</th><th>来源</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Autosports Group</td><td>经销商集团</td><td>—</td><td>—</td><td>—</td><td><a href="https://astonmartinsydney.com.au/" target="_blank" rel="noopener">来源</a></td></tr>
-              <tr><td>Adelaide City MG</td><td>门店</td><td>Mile End South SA</td><td>名爵</td><td>—</td><td><a href="https://adelaidecitymg.com.au" target="_blank" rel="noopener">来源</a></td></tr>
-              <tr><td>Albany MG</td><td>门店</td><td>Albany WA</td><td>名爵</td><td>—</td><td><a href="https://albanymg.com.au/" target="_blank" rel="noopener">来源</a></td></tr>
-              <tr><td>Albion Park MG</td><td>门店</td><td>Albion Park Rail NSW</td><td>名爵</td><td>—</td><td><a href="https://albionparkmg.com.au/" target="_blank" rel="noopener">来源</a></td></tr>
-              <tr><td>BYD Carpina</td><td>门店</td><td>Carpina PE</td><td>比亚迪</td><td>—</td><td><a href="https://us-site-api.byd.com/byd-api/us/dealer/getFindDealer?country=BR&amp;type=sales" target="_blank" rel="noopener">品牌方查询</a></td></tr>
-            </tbody>
-          </table>
+        <div class="demo-card">
+          <div class="demo-toolbar">
+            <input id="demoSearch" type="search" placeholder="搜索企业、城市、集团…" autocomplete="off">
+            <select id="demoCountry" aria-label="国家">
+              <option value="">全部国家</option>
+              <option value="au">澳洲</option>
+              <option value="br">巴西</option>
+            </select>
+            <select id="demoBrand" aria-label="品牌">
+              <option value="">全部品牌</option>
+              <option value="比亚迪">比亚迪</option>
+              <option value="名爵">名爵</option>
+              <option value="奇瑞">奇瑞</option>
+            </select>
+            <select id="demoState" aria-label="州/省">
+              <option value="">全部州/省</option>
+            </select>
+            <button id="demoReset" class="demo-reset" type="button">重置</button>
+          </div>
+          <div class="demo-meta">
+            <span id="demoCount">40 条演示数据</span>
+            <span>完整版 731 家 · 标准包不含联系方式</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table demo-table">
+              <thead>
+                <tr><th>企业</th><th>国家</th><th>类型</th><th>城市/州</th><th>品牌</th><th>集团</th><th>来源</th></tr>
+              </thead>
+              <tbody id="demoBody"></tbody>
+            </table>
+          </div>
+          <noscript><p class="demo-noscript">启用 JavaScript 后可在线筛选；也可以直接下载样本 PDF。</p></noscript>
+          <button id="demoMore" class="btn btn-outline demo-more" type="button" hidden>查看更多</button>
         </div>
         <div class="sample-actions">
           <a class="btn btn-gold" href="assets/sample-australia.pdf" target="_blank" rel="noopener">下载澳洲样本 PDF</a>
@@ -395,6 +415,7 @@
     </div>
   </footer>
 
+  <script src="data/demo-data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
