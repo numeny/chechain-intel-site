@@ -52,7 +52,9 @@ cd site
 py -m http.server 8080
 ```
 
-浏览器打开 `http://127.0.0.1:8080`。部署与替换说明见 `site/README.md`。
+浏览器打开 `http://127.0.0.1:8080`。部署与替换说明见 `site/README.md`；GitHub Pages 完整步骤见 `DEPLOY_GITHUB_PAGES.md`。
+
+已生成部署包 `site-github-pages.zip`（站点内容在压缩包根目录，可直接上传）。
 
 站点已做本地检查：无 JS 报错、无失败请求、无缺失锚点、无破图；桌面 1440px 与移动 390px 均验证。样本区含 40 条在线筛选演示（每国 20 条，已脱敏），支持按国家、品牌、州/省搜索。
 

@@ -11,11 +11,14 @@ py -m http.server 8080
 
 ## 部署（免费方案）
 
+完整的 GitHub Pages 步骤（含手机号/Token 安全说明）见根目录 `DEPLOY_GITHUB_PAGES.md`。
+
 任选其一：
 
-1. **GitHub Pages**：把 `site/` 推到 GitHub 仓库，Settings → Pages → 选择分支/目录。
-2. **Cloudflare Pages**：新建项目，上传 `site/` 目录，构建命令留空。
-3. **Netlify**：拖拽 `site/` 目录到 Netlify Drop。
+1. **GitHub Pages 网页上传**：新建仓库，把 `site/` 里的内容上传到仓库根目录，Settings → Pages → Deploy from a branch → main / root。
+2. **GitHub Pages + Actions**：推送整个仓库，Settings → Pages → Source 选 GitHub Actions；`.github/workflows/pages.yml` 会自动发布 `site/`。
+3. **Cloudflare Pages**：新建项目，上传 `site/` 目录，构建命令留空。
+4. **Netlify**：拖拽 `site/` 目录到 Netlify Drop。
 
 部署后把域名填到知乎/公众号/闲鱼简介里（如果平台允许）。
 

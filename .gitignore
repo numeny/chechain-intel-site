@@ -4,3 +4,4 @@ __pycache__/
 .pytest_cache/
 deliverables/
 site/preview-*.png
+site-github-pages.zip
