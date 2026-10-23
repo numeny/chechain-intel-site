@@ -1,0 +1,10 @@
+[project]
+name = "export-intel"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["openpyxl>=3.1", "reportlab>=4.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src"]
