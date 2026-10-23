@@ -31,6 +31,9 @@ py -3.11 -m venv .venv
 .venv\Scripts\python tools\export.py --country au --kind sample
 .venv\Scripts\python tools\export.py --country br --kind sample
 
+# 生成商品封面图
+.venv\Scripts\python tools\make_covers.py
+
 # 测试
 .venv\Scripts\python -m pytest
 ```
@@ -52,6 +55,8 @@ docs/               设计文档与实施计划
 
 - `sales/listings/xianyu.md`：3 条闲鱼文案（澳洲、巴西、定制）。
 - `sales/listings/zhubajie.md`：猪八戒/一品威客服务文案。
+- `sales/listings/xiaohongshu.md`：3 篇小红书笔记。
+- `sales/covers/`：3 张商品封面图（澳洲、巴西、定制）。
 - `sales/templates/faq.md`：客户常见问题。
 - `sales/templates/delivery.md`：收款、交付、售后话术。
 - `sales/templates/delivery-runbook.md`：每日/每周运营流程与 KPI。

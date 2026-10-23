@@ -45,20 +45,28 @@ def main(argv: list[str] | None = None) -> int:
         print(path)
         return 0
 
-    rows = load_companies(db, country)
-    relations = load_brand_relations(db, country)
-    links = load_group_links(db, country)
+    all_rows = load_companies(db, country)
+    all_relations = load_brand_relations(db, country)
+    all_links = load_group_links(db, country)
+    rows, relations, links = all_rows, all_relations, all_links
+    cta = None
     if args.kind == "sample":
-        rows = sample_rows(rows)
+        rows = sample_rows(all_rows)
         allowed = {r.company_id for r in rows}
         names = {r.name for r in rows}
-        relations = [r for r in relations if r.company_id in allowed]
-        links = [r for r in links if r.parent_name in names and r.child_name in names]
+        relations = [r for r in all_relations if r.company_id in allowed]
+        links = [r for r in all_links if r.parent_name in names and r.child_name in names]
+        cta = (
+            f"完整版：{len(all_rows)} 家企业、{len(all_relations)} 条品牌代理，499 元；"
+            f"闲鱼搜索“{label}汽车经销商渠道地图”，或私信“样本”。"
+        )
     xlsx = write_workbook(
         rows, out_dir / f"{slug}_dealers_{generated_at}.xlsx", label, generated_at,
-        relations=relations, links=links,
+        relations=relations, links=links, cta=cta,
     )
-    pdf = write_country_report(rows, out_dir / f"{slug}_dealers_{generated_at}.pdf", label, generated_at)
+    pdf = write_country_report(
+        rows, out_dir / f"{slug}_dealers_{generated_at}.pdf", label, generated_at, cta=cta,
+    )
     print(xlsx)
     print(pdf)
     return 0

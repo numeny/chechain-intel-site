@@ -23,6 +23,11 @@ BODY = ParagraphStyle("body", fontName=CN, fontSize=9, leading=14, wordWrap="CJK
 CELL = ParagraphStyle("cell", fontName=CN, fontSize=8, leading=11, wordWrap="CJK")
 HEAD = ParagraphStyle("head", fontName=CN, fontSize=8, leading=11, textColor=colors.white, wordWrap="CJK")
 JP_CELL = ParagraphStyle("jp", fontName=JP, fontSize=8, leading=11, wordWrap="CJK")
+CTA = ParagraphStyle(
+    "cta", fontName=CN, fontSize=11, leading=17, wordWrap="CJK",
+    textColor=colors.HexColor("#8A3B12"), backColor=colors.HexColor("#FFF1E0"),
+    borderColor=colors.HexColor("#E8B27A"), borderWidth=0.6, borderPadding=8,
+)
 
 
 def _p(text: str, style=BODY) -> Paragraph:
@@ -46,7 +51,7 @@ def _distribution(values: list[str]) -> str:
     return "；".join(f"{k} {v}" for k, v in Counter(values).most_common()) or "无"
 
 
-def write_country_report(rows: list[CompanyRow], path: str | Path, country_label: str, generated_at: str) -> Path:
+def write_country_report(rows: list[CompanyRow], path: str | Path, country_label: str, generated_at: str, cta: str | None = None) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     doc = SimpleDocTemplate(
@@ -79,6 +84,9 @@ def write_country_report(rows: list[CompanyRow], path: str | Path, country_label
             _p(r.brands, CELL), _p(r.group, CELL), _p(r.source_url[:60], CELL),
         ])
     story.append(_table(data, [42 * mm, 22 * mm, 28 * mm, 28 * mm, 30 * mm, 30 * mm]))
+    if cta:
+        story.append(Spacer(1, 6 * mm))
+        story.append(_p(cta, CTA))
     doc.build(story)
     return path
 

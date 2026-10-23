@@ -44,6 +44,7 @@ def write_workbook(
     generated_at: str,
     relations: list[BrandRelationRow] | None = None,
     links: list[GroupLinkRow] | None = None,
+    cta: str | None = None,
 ) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -95,6 +96,8 @@ def write_workbook(
         ("合规", "不含个人信息；如信息有误，可凭来源链接申请更正或删除。"),
         ("免责", "本报告为公开信息整理，不构成投资或交易建议；请以品牌方/企业官方信息为准。"),
     ]
+    if cta:
+        info_rows.append(("升级完整版", cta))
     for row in info_rows:
         info.append(row)
     for cell in info["A"]:

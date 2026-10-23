@@ -31,6 +31,13 @@ def test_write_workbook_creates_expected_sheets(tmp_path):
     assert wb["说明"]["B2"].value == "澳洲经销商与代理关系包"
 
 
+def test_write_workbook_adds_cta_row(tmp_path):
+    path = write_workbook([_row()], tmp_path / "au.xlsx", "澳洲", "2026-10-23", cta="完整版 499 元")
+    wb = load_workbook(path)
+    values = [cell.value for cell in wb["说明"]["A"]]
+    assert "升级完整版" in values
+
+
 def test_write_workbook_adds_relation_and_link_sheets(tmp_path):
     relations = [BrandRelationRow(2, "BYD Sydney", "比亚迪", "official_dealer", "https://example.com", 0.9, "2026-10-17")]
     links = [GroupLinkRow("Autosports Group", "BYD Sydney", "group_member", "https://example.com", 0.7)]
