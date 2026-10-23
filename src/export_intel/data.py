@@ -32,6 +32,57 @@ class SignalRow:
     country: str
 
 
+@dataclass(frozen=True)
+class BrandRelationRow:
+    company_id: int
+    company_name: str
+    brand: str
+    relationship_type: str
+    source_url: str
+    confidence: float
+    updated_at: str
+
+
+@dataclass(frozen=True)
+class GroupLinkRow:
+    parent_name: str
+    child_name: str
+    link_type: str
+    source_url: str
+    confidence: float
+
+
+TYPE_LABELS = {"dealer_group": "经销商集团", "dealer_store": "经销商门店"}
+RELATIONSHIP_LABELS = {"official_dealer": "官方授权经销商"}
+LINK_LABELS = {"group_member": "集团成员"}
+SIGNAL_LABELS = {
+    "new_dealership": "新经销店",
+    "partnership": "合作",
+    "expansion": "扩张",
+    "hiring": "招聘",
+    "auto_show": "车展",
+    "policy": "政策",
+    "pricing": "价格",
+    "other": "其他",
+}
+
+
+def type_label(value: str) -> str:
+    return TYPE_LABELS.get(value, value)
+
+
+def relationship_label(value: str) -> str:
+    return RELATIONSHIP_LABELS.get(value, value)
+
+
+def link_label(value: str) -> str:
+    return LINK_LABELS.get(value, value)
+
+
+def signal_label(value: str) -> str:
+    return SIGNAL_LABELS.get(value, value)
+
+
 def _connect(db_path: str | Path) -> sqlite3.Connection:
     uri = f"file:{Path(db_path).as_posix()}?mode=ro"
     conn = sqlite3.connect(uri, uri=True)
@@ -108,6 +159,76 @@ def load_companies(db_path: str | Path, country: str) -> list[CompanyRow]:
             )
         )
     return result
+
+
+def _company_name(row: sqlite3.Row) -> str:
+    return row["name_local"] or row["name_en"] or row["name_zh"] or ""
+
+
+def load_brand_relations(db_path: str | Path, country: str) -> list[BrandRelationRow]:
+    conn = _connect(db_path)
+    try:
+        rows = conn.execute(
+            """
+            select br.company_id, c.name_zh, c.name_en, c.name_local,
+                   b.name_zh as brand_zh, b.name_en as brand_en, b.name_ja as brand_ja,
+                   br.relationship_type, br.evidence_url, br.confidence, br.updated_at
+            from brand_representation br
+            join company c on c.id = br.company_id
+            join brand b on b.id = br.brand_id
+            where c.country=? and c.status='published'
+              and br.status='published' and br.is_current=1 and b.status='published'
+            order by c.name_local, brand_zh
+            """,
+            (country,),
+        ).fetchall()
+    finally:
+        conn.close()
+    result = []
+    for r in rows:
+        brand = r["brand_zh"] or r["brand_en"] or r["brand_ja"] or ""
+        result.append(
+            BrandRelationRow(
+                company_id=r["company_id"],
+                company_name=_company_name(r),
+                brand=brand,
+                relationship_type=r["relationship_type"] or "",
+                source_url=r["evidence_url"] or "",
+                confidence=float(r["confidence"] or 0),
+                updated_at=(r["updated_at"] or "")[:10],
+            )
+        )
+    return result
+
+
+def load_group_links(db_path: str | Path, country: str) -> list[GroupLinkRow]:
+    conn = _connect(db_path)
+    try:
+        rows = conn.execute(
+            """
+            select p.name_local as parent_name, c.name_local as child_name,
+                   cl.link_type, cl.evidence_url, cl.confidence
+            from corporate_link cl
+            join company p on p.id = cl.parent_id
+            join company c on c.id = cl.child_id
+            where p.country=? and p.status='published' and c.status='published'
+              and cl.status='published' and cl.link_type='group_member'
+            order by p.name_local, c.name_local
+            """,
+            (country,),
+        ).fetchall()
+    finally:
+        conn.close()
+    return [
+        GroupLinkRow(
+            parent_name=r["parent_name"] or "",
+            child_name=r["child_name"] or "",
+            link_type=r["link_type"] or "",
+            source_url=r["evidence_url"] or "",
+            confidence=float(r["confidence"] or 0),
+        )
+        for r in rows
+    ]
 
 
 def load_signals(db_path: str | Path, country: str) -> list[SignalRow]:

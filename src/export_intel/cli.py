@@ -4,7 +4,7 @@ import argparse
 from datetime import date
 from pathlib import Path
 
-from .data import load_companies, load_signals
+from .data import load_brand_relations, load_companies, load_group_links, load_signals
 from .excel import write_workbook
 from .pdf import write_country_report, write_signal_report
 from .sample import sample_rows
@@ -46,9 +46,18 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     rows = load_companies(db, country)
+    relations = load_brand_relations(db, country)
+    links = load_group_links(db, country)
     if args.kind == "sample":
         rows = sample_rows(rows)
-    xlsx = write_workbook(rows, out_dir / f"{slug}_dealers_{generated_at}.xlsx", label, generated_at)
+        allowed = {r.company_id for r in rows}
+        names = {r.name for r in rows}
+        relations = [r for r in relations if r.company_id in allowed]
+        links = [r for r in links if r.parent_name in names and r.child_name in names]
+    xlsx = write_workbook(
+        rows, out_dir / f"{slug}_dealers_{generated_at}.xlsx", label, generated_at,
+        relations=relations, links=links,
+    )
     pdf = write_country_report(rows, out_dir / f"{slug}_dealers_{generated_at}.pdf", label, generated_at)
     print(xlsx)
     print(pdf)
