@@ -1,9 +1,10 @@
+import os
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-URL = (ROOT / "site" / "index.html").as_uri()
+URL = os.environ.get("SITE_URL") or (ROOT / "site" / "index.html").as_uri()
 
 with sync_playwright() as p:
     browser = p.chromium.launch(channel="msedge", headless=True)
